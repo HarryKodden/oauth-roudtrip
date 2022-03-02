@@ -75,7 +75,7 @@ def main():
   })
 
   if r.status_code != 200:
-    return json.dumps({
+    return jsonify({
       'error': 'The resource server returns an error: \n{}'.format(
         r.text)
     }), 500
@@ -101,7 +101,7 @@ def callback():
   authorization_code = request.args.get('authorization_code')
 
   if not authorization_code:
-    return json.dumps({
+    return jsonify({
       'error': 'No authorization code is received.'
     }), 500
 
@@ -116,7 +116,7 @@ def callback():
   })
   
   if r.status_code != 200:
-    return json.dumps({
+    return jsonify({
       'error': 'The authorization server returns an error: \n{}'.format(
         r.text)
     }), 500

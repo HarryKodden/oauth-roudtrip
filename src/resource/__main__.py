@@ -22,7 +22,7 @@ def check_token(f):
       # Checks if the access token is present and valid.
       auth_header = request.headers.get('Authorization')
       if not auth_header or 'Bearer' not in auth_header:
-        return json.dumps({
+        return jsonify({
           'error': 'Access token does not exist.'
         }), 400
       
@@ -31,7 +31,7 @@ def check_token(f):
       if access_token and verify_access_token(access_token):
         logging.info("Access token is valid !")
       else:
-        return json.dumps({
+        return jsonify({
           'error': 'Access token is invalid.'
         }), 400
       return f(*args, **kwargs)

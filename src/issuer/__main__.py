@@ -8,7 +8,7 @@ from auth import (authenticate_user_credentials, authenticate_client,
                   verify_authorization_code, verify_client_info,
                   JWT_LIFE_SPAN, public_key)
 
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, jsonify
 from urllib.parse import urlencode
 
 # Setup logging
@@ -27,12 +27,12 @@ def auth():
   redirect_url = request.args.get('redirect_url')
 
   if None in [ client_id, redirect_url ]:
-    return json.dumps({
+    return jsonify({
       "error": "invalid_request"
     }), 400
 
   if not verify_client_info(client_id, redirect_url):
-    return json.dumps({
+    return jsonify({
       "error": "invalid_client"
     })
 
@@ -52,7 +52,7 @@ def process_redirect_url(redirect_url, authorization_code):
 
 @app.route('/.well-known/openid-configuration', methods = ['GET'])
 def wellknown():
-  return json.dumps({
+  return jsonify({
       "issuer": os.environ['MY_URL'],
       "authorization_endpoint": os.environ['MY_URL']+url_for('auth'),
       "token_endpoint": os.environ['MY_URL']+url_for('exchange_for_token'),
@@ -69,17 +69,17 @@ def signin():
   redirect_url = request.form.get('redirect_url')
 
   if None in [ username, password, client_id, redirect_url ]:
-    return json.dumps({
+    return jsonify({
       "error": "invalid_request"
     }), 400
 
   if not verify_client_info(client_id, redirect_url):
-    return json.dumps({
+    return jsonify({
       "error": "invalid_client"
     })
 
   if not authenticate_user_credentials(username, password):
-    return json.dumps({
+    return jsonify({
       'error': 'access_denied'
     }), 401
 
@@ -101,26 +101,24 @@ def exchange_for_token():
   client_secret = request.form.get('client_secret')
   redirect_url = request.form.get('redirect_url')
 
-  logging.debug(json.dumps(request.form))
-
   if None in [ authorization_code, client_id, client_secret, redirect_url ]:
-    return json.dumps({
+    return jsonify({
       "error": "invalid_request"
     }), 400
 
   if not authenticate_client(client_id, client_secret):
-    return json.dumps({
+    return jsonify({
       "error": "invalid_client"
     }), 400
 
   if not verify_authorization_code(authorization_code, client_id, redirect_url):
-    return json.dumps({
+    return jsonify({
       "error": "access_denied"
     }), 400
 
   access_token = generate_access_token()
 
-  return json.dumps({ 
+  return jsonify({ 
     "access_token": access_token,
     "token_type": "JWT",
     "expires_in": JWT_LIFE_SPAN
