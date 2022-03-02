@@ -8,7 +8,7 @@ import logging
 from cryptography.fernet import Fernet
 from jwcrypto import jwk
 
-signing_key = jwk.JWK.generate(kty='RSA', size=2048, alg='RSA-OAEP-256', use='enc', kid='12345')
+signing_key = jwk.JWK.generate(kty='RSA', size=2048, alg='RSA-OAEP-256', use='sig', kid='12345')
 encryption_key = Fernet.generate_key()
 
 ISSUER = os.environ['MY_URL']

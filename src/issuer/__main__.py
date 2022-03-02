@@ -56,7 +56,7 @@ def wellknown():
       "issuer": os.environ['MY_URL'],
       "authorization_endpoint": os.environ['MY_URL']+url_for('auth'),
       "token_endpoint": os.environ['MY_URL']+url_for('exchange_for_token'),
-      "jwks": os.environ['MY_URL']+url_for('jwks')
+      "jwks_uri": os.environ['MY_URL']+url_for('jwks')
     })
 
 
@@ -90,9 +90,11 @@ def signin():
   return redirect(url, code = 303)
 
 
-@app.route('/jwks', methods = ['get'])
+@app.route('/jwks_uri', methods = ['get'])
 def jwks():
-    return jsonify(json.loads(public_key())), 200
+    logging.info(json.loads(public_key()))
+
+    return jsonify({ "keys": [ json.loads(public_key()) ] }), 200
 
 
 @app.route('/token', methods = ['POST'])
