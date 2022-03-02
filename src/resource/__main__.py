@@ -17,6 +17,7 @@ logging.basicConfig(
 app = Flask(__name__)
 
 def check_token(f):
+  
     @wraps(f)
     def decorated(*args, **kwargs):
       # Checks if the access token is present and valid.
@@ -34,6 +35,7 @@ def check_token(f):
         return jsonify({
           'error': 'Access token is invalid.'
         }), 400
+
       return f(*args, **kwargs)
 
     return decorated

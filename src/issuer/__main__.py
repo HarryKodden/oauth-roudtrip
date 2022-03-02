@@ -89,9 +89,11 @@ def signin():
 
   return redirect(url, code = 303)
 
+
 @app.route('/jwks', methods = ['get'])
 def jwks():
-    return public_key(), 200
+    return jsonify(json.loads(public_key())), 200
+
 
 @app.route('/token', methods = ['POST'])
 def exchange_for_token():
@@ -123,6 +125,7 @@ def exchange_for_token():
     "token_type": "JWT",
     "expires_in": JWT_LIFE_SPAN
   })
+
 
 if __name__ == '__main__':
   app.run(os.environ.get('HOST', '0.0.0.0'), os.environ.get('PORT', 80), debug = True)

@@ -19,7 +19,7 @@ def verify_access_token(access_token):
     if r.status_code != 200:
           raise Exception("Missing jwks configuration!")
 
-    key = jwk.JWK(**json.loads(r.text))
+    key = jwk.JWK(**r.json())
 
     _ = jwt.decode(access_token, key.export_to_pem(),
                                issuer = ISSUER,
